@@ -8,7 +8,6 @@ export default function ProtectedRoute({
   children: React.ReactNode;
 }) {
   const { isAuthenticated, isLoading, error, user, loginWithRedirect } = useAuth0();
-  console.log(isAuthenticated, isLoading, error, user, "ProtectedRoute");
   const router = useRouter();
 
   useEffect(() => {
@@ -17,7 +16,7 @@ export default function ProtectedRoute({
         authorizationParams: {
           screen_hint: "login",
           ui_locales: 'zh-CN',
-          redirect_uri: typeof window !== undefined ? window.location.href : '',
+          redirect_uri: typeof window !== 'undefined' ? window.location.href : '',
         },
         openUrl(url) {
           router.push(url);
