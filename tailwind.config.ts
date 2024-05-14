@@ -37,6 +37,7 @@ const config = {
           "mint-green": "var(--primary-mint-green)",
           "darker-teal": "var(--primary-darker-teal)",
           "light-yellow": "var(--primary-light-yellow)",
+          brand: "#F04D23",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -65,6 +66,7 @@ const config = {
         surface: {
           DEFAULT: "var(--surface-default)",
           container: "var(--surface-container)",
+          background: "var(--surface-background)",
           select1: "var(--surface-select1)",
           select2: "var(--surface-select2)",
           disabled: "var(--surface-disabled)",
@@ -82,6 +84,9 @@ const config = {
         lg: "var(--radius)",
         md: "calc(var(--radius) - 2px)",
         sm: "calc(var(--radius) - 4px)",
+      },
+      borderWidth: {
+        1: "1px",
       },
       keyframes: {
         "accordion-down": {
