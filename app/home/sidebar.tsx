@@ -74,7 +74,11 @@ export default function Sidebar({ isCollapsed }: { isCollapsed: boolean }) {
             </DropdownMenuTrigger>
             <DropdownMenuContent>
               <DropdownMenuItem onClick={() => {
-                logout()
+                logout({
+                  logoutParams: {
+                    returnTo: window.location.origin,
+                  }
+                })
               }}>
                 <LogOut className="mr-2 h-4 w-4" />
                 <span>退出登录</span>
