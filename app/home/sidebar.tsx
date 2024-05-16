@@ -16,7 +16,9 @@ import {
 import { useAuth0 } from "@auth0/auth0-react";
 
 export default function Sidebar({ isCollapsed }: { isCollapsed: boolean }) {
-  const { logout } = useAuth0();
+  const { logout, user } = useAuth0();
+
+  console.log(user, 'u')
 
   return (
     <div className="h-full flex flex-col">
@@ -25,6 +27,12 @@ export default function Sidebar({ isCollapsed }: { isCollapsed: boolean }) {
       </Link>
       <div className="flex flex-col mx-4 space-y-6 flex-grow">
         <div>
+          <NavItem>
+            <NavItemIcon>
+              <Image src={user!.picture!} alt="avatar" width={24} height={24} className="rounded-full" />
+            </NavItemIcon>
+            {!isCollapsed && <NavItemText>{user!.name!}</NavItemText>}
+          </NavItem>
           <NavItem>
             <NavItemIcon>
               <File size={22} strokeWidth={0.5} />
@@ -64,16 +72,16 @@ export default function Sidebar({ isCollapsed }: { isCollapsed: boolean }) {
             )}
           </NavItem>
         </div>
-        <div className="!mt-auto ml-2 py-5 text-text-title">
+        <div className="!mt-auto py-5 text-text-title">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <div className="flex items-center space-x-3">
+              <Button variant="ghost" className="w-full flex justify-start items-center space-x-3">
                 <Settings size={20} />
                 <span>设置</span>
-              </div>
+              </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent>
-              <DropdownMenuItem onClick={() => {
+            <DropdownMenuContent align="start">
+              <DropdownMenuItem className="cursor-pointer" onClick={() => {
                 logout({
                   logoutParams: {
                     returnTo: window.location.origin,

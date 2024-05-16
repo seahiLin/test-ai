@@ -28,7 +28,7 @@ export default function ProtectedRoute({
   }, [isLoading, isAuthenticated, router, error, user, loginWithRedirect]);
 
   if (isLoading) {
-    return "loading";
+    return null
   }
 
   if (error) {
