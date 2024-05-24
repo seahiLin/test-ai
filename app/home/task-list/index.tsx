@@ -4,7 +4,23 @@ import TaskCard from "./card";
 import ToolBar from "./tool-bar";
 import AssignFilter from "./assign-filter";
 import FilterAndOrderStatusBar from "./filter-order-status-bar";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import React from "react";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import UpdateListPanel from "./update-list-panel";
+import { cn } from "@/lib/utils";
+
+export const TaskUpdateOnDisplayContext = React.createContext<{
+  taskId: string | null;
+  setTaskId: (taskId: string | null) => void;
+}>({
+  taskId: null,
+  setTaskId: () => {},
+});
 
 const items = [
   {
@@ -22,7 +38,11 @@ const items = [
     },
     attachments: [
       {
-        type: "PDF",
+        type: "FILE",
+        url: "https://www.pwithe.com/Public/Upload/download/20170211/589ebf8e5bb13.pdf",
+      },
+      {
+        type: "LINK",
         url: "https://www.pwithe.com/Public/Upload/download/20170211/589ebf8e5bb13.pdf",
       },
     ],
@@ -41,7 +61,7 @@ const items = [
     },
     attachments: [
       {
-        type: "PDF",
+        type: "FILE",
         url: "https://www.pwithe.com/Public/Upload/download/20170211/589ebf8e5bb13.pdf",
       },
     ],
@@ -60,7 +80,7 @@ const items = [
     },
     attachments: [
       {
-        type: "PDF",
+        type: "FILE",
         url: "https://www.pwithe.com/Public/Upload/download/20170211/589ebf8e5bb13.pdf",
       },
     ],
@@ -78,44 +98,70 @@ export interface FilterOption {
   value: string | string[];
 }
 
-export default function TaskList() {
-  const [orderOptions, setOrderOptions] = useState<Array<OrderOption>>([{
-    key: "dueDate",
-    label: "截止日期，升序",
-    value: "asc",
-  }]);
-  const [filterOptions, setFilterOptions] = useState<Array<FilterOption>>([{
-    key: "status",
-    label: "任务状态: 未开始",
-    value: "UNSTARTED",
-  }, {
-    key: "dueData",
-    label: "截止日期: 2022-01-01",
-    value: "2022-01-01",
-  }]);
+export default function TaskList({ projectId }: { projectId?: string }) {
+  const [orderOptions, setOrderOptions] = useState<Array<OrderOption>>([
+    {
+      key: "dueDate",
+      label: "截止日期，升序",
+      value: "asc",
+    },
+  ]);
+  const [filterOptions, setFilterOptions] = useState<Array<FilterOption>>([
+    {
+      key: "status",
+      label: "任务状态: 未开始",
+      value: "UNSTARTED",
+    },
+    {
+      key: "dueData",
+      label: "截止日期: 2022-01-01",
+      value: "2022-01-01",
+    },
+  ]);
+  const [taskOnDisplay, setTaskOnDisplay] = useState<string | null>(null);
 
   return (
-    <div className="p-3 h-full">
-      <div className="border-[0.5px] border-border h-full rounded-md bg-surface flex flex-col">
-        <div className="border-b-[0.5px] border-border">
-          <ToolBar />
+    <TaskUpdateOnDisplayContext.Provider
+      value={{
+        taskId: taskOnDisplay,
+        setTaskId: setTaskOnDisplay,
+      }}
+    >
+      <div className="h-full relative">
+        <div
+          className={cn(
+            "relative z-30 border-[0.5px] border-border h-full rounded-lg bg-surface flex flex-col",
+            taskOnDisplay ? "rounded-r-none" : ""
+          )}
+        >
+          <div className="border-b-[0.5px] border-border">
+            <ToolBar />
+          </div>
+          <AssignFilter />
+          <FilterAndOrderStatusBar
+            orderOptions={orderOptions}
+            filterOptions={filterOptions}
+          />
+          <div className="overflow-y-auto flex-grow">
+            {items.map((item) => (
+              <TaskCard
+                key={item.id}
+                {...item}
+                onAccept={() => {}}
+                onReject={() => {}}
+              />
+            ))}
+          </div>
         </div>
-        <AssignFilter />
-        <FilterAndOrderStatusBar
-          orderOptions={orderOptions}
-          filterOptions={filterOptions}
-        />
-        <div className="overflow-y-auto flex-grow">
-          {items.map((item) => (
-            <TaskCard
-              key={item.id}
-              {...item}
-              onAccept={() => {}}
-              onReject={() => {}}
-            />
-          ))}
+        <div
+          className={cn(
+            "absolute z-10 h-full left-full top-0 border-[0.5px] border-left-0 rounded-r-lg overflow-hidden transition-all duration-300",
+            taskOnDisplay ? " translate-x-0" : "-translate-x-full opacity-0"
+          )}
+        >
+          <UpdateListPanel />
         </div>
       </div>
-    </div>
+    </TaskUpdateOnDisplayContext.Provider>
   );
 }

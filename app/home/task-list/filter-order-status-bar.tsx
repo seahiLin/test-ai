@@ -19,7 +19,7 @@ export default function FilterAndOrderStatusBar({
               <Button
                 key={option.key}
                 variant="outline"
-                className="p-2 h-fit cursor-default rounded-[100px] border-primary-darker-teal text-primary-darker-teal hover:text-primary-darker-teal"
+                className="p-2 h-fit cursor-default rounded-[100px] border-primary-teal text-primary-teal hover:text-primary-teal"
               >
                 {option.label}
                 <X size={16} className="cursor-pointer" />
@@ -34,7 +34,7 @@ export default function FilterAndOrderStatusBar({
             <Button
               key={option.key}
               variant="outline"
-              className="p-2 h-fit cursor-default rounded-[100px] border-primary-darker-teal text-primary-darker-teal hover:text-primary-darker-teal"
+              className="p-2 h-fit cursor-default rounded-[100px] border-primary-teal text-primary-teal hover:text-primary-teal"
             >
               {option.label}
               <X size={16} className="cursor-pointer" />

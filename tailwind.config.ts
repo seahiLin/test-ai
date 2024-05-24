@@ -36,6 +36,7 @@ const config = {
           orange: "var(--primary-orange)",
           "mint-green": "var(--primary-mint-green)",
           "darker-teal": "var(--primary-darker-teal)",
+          "teal": "var(--primary-teal)",
           "light-yellow": "var(--primary-light-yellow)",
           brand: "#F04D23",
         },

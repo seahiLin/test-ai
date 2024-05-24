@@ -10,20 +10,23 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  modal,
 }: Readonly<{
   children: React.ReactNode;
+  modal: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" suppressHydrationWarning>
       <body>
         <Auth0Wrapper>
           <ThemeProvider
             attribute="class"
             defaultTheme="dark"
             enableSystem
-            disableTransitionOnChange
+            // disableTransitionOnChange
           >
             {children}
+            {modal}
           </ThemeProvider>
         </Auth0Wrapper>
       </body>

@@ -14,7 +14,7 @@ export default function ProtectedRoute({
     if (!isLoading && !error && !isAuthenticated) {
       loginWithRedirect({
         authorizationParams: {
-          screen_hint: "login",
+          // screen_hint: "login",
           redirect_uri: typeof window !== 'undefined' ? window.location.href : '',
         },
         openUrl(url) {
