@@ -1,6 +1,6 @@
 "use client";
 
-import TaskTicket from "@/app/task/[id]/page";
+import { TaskTicket } from "@/app/task/[id]/ticket";
 import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
