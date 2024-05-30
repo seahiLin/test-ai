@@ -5,9 +5,15 @@ import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export default function TaskTicketDrawer() {
+export default function TaskTicketDrawer({
+  params,
+}: {
+  params: {
+    id: string;
+  };
+}) {
   const router = useRouter();
-  const [open, setOpen] = useState(true)
+  const [open, setOpen] = useState(true);
 
   return (
     <Drawer
@@ -20,13 +26,15 @@ export default function TaskTicketDrawer() {
       }}
     >
       <DrawerContent className="border-none focus-visible:outline-none">
-        <TaskTicket onClose={() => {
-          setOpen(false);
-          setTimeout(() => {
-            router.back();
-          }, 300)
-          
-        }} />
+        <TaskTicket
+          taskId={params.id}
+          onClose={() => {
+            setOpen(false);
+            setTimeout(() => {
+              router.back();
+            }, 300);
+          }}
+        />
       </DrawerContent>
     </Drawer>
   );

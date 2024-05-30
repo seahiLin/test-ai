@@ -18,7 +18,6 @@ import { useEffect } from "react";
 export default function ChatRoom() {
   const { messages, input, handleInputChange, handleSubmit } = useChat();
   
-  console.log(messages, 'me')
 
   return (
     <div className="flex flex-col w-full h-full rounded-lg border-[0.5px] border-border-default bg-surface">

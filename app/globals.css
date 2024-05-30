@@ -19,7 +19,7 @@
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
 
-    --muted: 210 40% 96.1%;
+    --muted: #272727;
     --muted-foreground: 215.4 16.3% 46.9%;
 
     --accent: 210 40% 96.1%;
@@ -51,7 +51,7 @@
     --secondary: 0 0% 20%;
     --secondary-foreground: 210 40% 98%;
 
-    --muted: 217.2 32.6% 17.5%;
+    --muted: #272727;
     --muted-foreground: 215 20.2% 65.1%;
 
     --accent: 0 0% 20%;
@@ -110,4 +110,19 @@
 /* For Firefox */
 * {
   scrollbar-width: thin;
+}
+
+.ant-upload-drag {
+  border: none !important;
+}
+.ant-upload-drag .ant-upload-btn {
+  padding: 0 !important;
+}
+.ant-upload-list {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 8px;
+}
+.ant-upload-list::before, .ant-upload-list::after {
+  margin: -4px;
 }

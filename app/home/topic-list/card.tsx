@@ -78,7 +78,7 @@ export default function Card({
         {topic.description}
       </div>
       {fileAttachments.length ? (
-        <div className="mt-2">
+        <div className="mt-2 flex flex-col items-start gap-2">
           {fileAttachments.map((attachment: any, index: number) => (
             <Link
               href={attachment.url}
@@ -87,7 +87,7 @@ export default function Card({
               className="inline-flex mt-2 items-center rounded-sm gap-1 py-1 px-2 bg-surface-select1"
             >
               <Link2 size={16} className="text-text-caption" />
-              <span className=" text-primary-blue">{attachment.fileName}</span>
+              <span className=" text-primary-blue line-clamp-1">{attachment.fileName}</span>
             </Link>
           ))}
         </div>

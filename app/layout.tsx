@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { ThemeProvider } from "@/components/theme-provider";
 import "./globals.css";
 import Auth0Wrapper from "@/lib/auth0";
+import { Toaster } from "@/components/ui/toaster"
 
 export const metadata: Metadata = {
   title: "Eve Ai",
@@ -29,6 +30,7 @@ export default function RootLayout({
             {modal}
           </ThemeProvider>
         </Auth0Wrapper>
+        <Toaster />
       </body>
     </html>
   );

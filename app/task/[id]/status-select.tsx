@@ -17,8 +17,13 @@ export default function StatusSelect({
   };
 }) {
   return (
-    <Select onValueChange={field.onChange} defaultValue={field.value}>
-      <FormControl className="w-60">
+    <Select
+      onValueChange={(val) => {
+        val && field.onChange(val);
+      }}
+      value={field.value}
+    >
+      <FormControl className="w-56">
         <SelectTrigger>
           <SelectValue placeholder="请选择任务状态" />
         </SelectTrigger>

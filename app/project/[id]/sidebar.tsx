@@ -35,7 +35,7 @@ export default function Sidebar({ projectId }: { projectId: string }) {
   return (
     <div className="h-full flex flex-col items-center text-text-main-btn">
       <Link className="mx-6 py-4 border-b-1" href="/">
-        <BrandIcon className="w-6 h-6" />
+        <BrandIcon className="w-7 h-7" />
       </Link>
       {getLinks(projectId).map((item) => (
         <Link
@@ -47,7 +47,7 @@ export default function Sidebar({ projectId }: { projectId: string }) {
           )}
         >
           {item.icon}
-          <span className="leading-none">{item.label}</span>
+          <span className="leading-none whitespace-nowrap">{item.label}</span>
         </Link>
       ))}
     </div>

@@ -1,7 +1,13 @@
 import { TaskTicket } from "./ticket";
 
-export default function Page() {
+export default function Page({
+  params,
+}: {
+  params: {
+    id: string;
+  };
+}) {
   return (
-    <TaskTicket />
+    <TaskTicket taskId={params.id} />
   )
 }

@@ -2,44 +2,67 @@ import React from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import MotiongOutlinedSvg from "@/public/icons/motiong-outlined.svg";
-import StarIcon from "@/public/icons/star.svg";
-import { File, LogOut, Plus, Settings } from "lucide-react";
+import { ArrowDown, ChevronDown, File, LogOut, Plus, Settings, Star } from "lucide-react";
 import Link from "next/link";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { useAuth0 } from "@auth0/auth0-react";
+import BrandIcon from "@/components/brand-icon";
 
 export default function Sidebar({ isCollapsed }: { isCollapsed: boolean }) {
   const { logout, user } = useAuth0();
 
   return (
     <div className="h-full flex flex-col">
-      <Link href="/" className="inline-block mt-4 mx-5 mb-3">
-        <Image src={MotiongOutlinedSvg} alt="home" className="w-[26px]" />
+      <Link href="/" className="inline-block mt-4 mx-6 mb-5">
+        <BrandIcon className="w-7 h-7 text-text-main-btn" />
       </Link>
       <div className="flex flex-col mx-4 space-y-6 flex-grow">
         <div>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button
+                variant="ghost"
+                className="justify-between w-full h-fit p-0"
+              >
+                <NavItem className="">
+                  <NavItemIcon>
+                    <Image
+                      src={user?.picture!}
+                      alt="avatar"
+                      width={24}
+                      height={24}
+                      className="rounded-full"
+                    />
+                  </NavItemIcon>
+                  {!isCollapsed && <NavItemText>{user?.name!}</NavItemText>}
+                </NavItem>
+                <ChevronDown size={16} color="var(--text-subtitle)" className="mr-2" />
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="start" >
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={() => {
+                  logout({
+                    logoutParams: {
+                      returnTo: window.location.origin,
+                    },
+                  });
+                }}
+              >
+                <LogOut className="mr-2 h-4 w-4" />
+                <span>退出登录</span>
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
           <NavItem>
             <NavItemIcon>
-              <Image
-                src={user!.picture!}
-                alt="avatar"
-                width={24}
-                height={24}
-                className="rounded-full"
-              />
-            </NavItemIcon>
-            {!isCollapsed && <NavItemText>{user!.name!}</NavItemText>}
-          </NavItem>
-          <NavItem>
-            <NavItemIcon>
-              <File size={22} strokeWidth={0.5} />
+              <File size={20} strokeWidth={1.2} />
             </NavItemIcon>
             {!isCollapsed && <NavItemText>文件中心</NavItemText>}
           </NavItem>
@@ -57,7 +80,7 @@ export default function Sidebar({ isCollapsed }: { isCollapsed: boolean }) {
           </Button>
           <NavItem>
             <NavItemIcon>
-              <Image src={StarIcon} alt="star" width={24} />
+              <Star size={20} strokeWidth={1.2} />
             </NavItemIcon>
             {!isCollapsed && <NavItemText>我收藏的项目</NavItemText>}
             {!isCollapsed && (
@@ -77,34 +100,7 @@ export default function Sidebar({ isCollapsed }: { isCollapsed: boolean }) {
             )}
           </NavItem>
         </div>
-        <div className="!mt-auto py-5 text-text-title">
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                variant="ghost"
-                className="w-full flex justify-start items-center space-x-3"
-              >
-                <Settings size={20} />
-                <span>设置</span>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="start">
-              <DropdownMenuItem
-                className="cursor-pointer"
-                onClick={() => {
-                  logout({
-                    logoutParams: {
-                      returnTo: window.location.origin,
-                    },
-                  });
-                }}
-              >
-                <LogOut className="mr-2 h-4 w-4" />
-                <span>退出登录</span>
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
+        <div className="!mt-auto py-5 text-text-title"></div>
       </div>
     </div>
   );
@@ -131,7 +127,12 @@ const NavItemIcon: React.FC<{
   children: React.ReactNode;
 }> = ({ className, children, ...props }) => {
   return (
-    <div className={cn("flex items-center justify-center py-2", className)}>
+    <div
+      className={cn(
+        "flex items-center justify-center py-2 text-text-main-btn shrink-0",
+        className
+      )}
+    >
       {children}
     </div>
   );
@@ -143,7 +144,7 @@ const NavItemText: React.FC<{
   return (
     <div
       className={cn(
-        "text-text-main-btn py-2 leading-6 whitespace-nowrap",
+        "text-text-main-btn text-base py-2 line-clamp-1 leading-6 whitespace-nowrap",
         className
       )}
     >

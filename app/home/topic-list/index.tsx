@@ -1,13 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import CategoryFilter from "./category-filter";
 import ToolBar from "./tool-bar";
-import { cn } from "@/lib/utils";
 import { Topic } from "@/lib/api";
 import { Timestamp } from "@bufbuild/protobuf";
-import { group } from "console";
 import Card from "./card";
+import { useMount } from "react-use";
+import { Skeleton } from "@/components/ui/skeleton";
+import InfiniteScroll from "@/components/ui/infinite-scroll";
+import HashLoader from "react-spinners/HashLoader";
 
 const topics: Topic[] = [
   {
@@ -127,7 +129,34 @@ const topics: Topic[] = [
 
 export default function TopicList() {
   const [isExpand, setIsExpand] = useState(false);
-  
+
+  const [topicList, setTopicList] = useState<Array<Topic>>([]);
+  const [skip, setSkip] = useState(0);
+  const [total, setTotal] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  const getTopicList = useCallback(async () => {
+    setLoading(true);
+    // const res = await taskService.listTasks({
+    //   pageSize: 10,
+    //   skip,
+    // });
+    await new Promise((resolve) => setTimeout(resolve, 2000));
+    const res = {
+      enhancedTasks: topics,
+      totalSize: 32,
+    };
+
+    setTopicList([...topicList, ...res.enhancedTasks]);
+    setSkip(skip + 10);
+    setTotal(Number(res.totalSize));
+    setLoading(false);
+  }, [skip, topicList]);
+
+  useMount(() => {
+    getTopicList();
+  });
+
   return (
     <div className="border-[0.5px] border-border h-full rounded-lg bg-surface flex flex-col">
       <div className="border-b-[0.5px] border-border">
@@ -135,9 +164,36 @@ export default function TopicList() {
       </div>
       {isExpand ? null : <CategoryFilter />}
       <div className="relative py-4 flex flex-col gap-5 flex-grow overflow-y-auto px-5">
-        {topics.map((topic) => (
+        {(loading && skip === 0) && (
+          <div className="py-4 pr-3 pl-6 bg-surface-container rounded-md">
+            <Skeleton className="h-6 w-24 rounded-md bg-surface" />
+            <Skeleton className="h-8 w-1/3 mt-4 bg-surface" />
+            <div className="mt-3">
+              <Skeleton className="h-16 bg-surface" />
+            </div>
+            <Skeleton className="h-8 w-2/3 mt-2.5 bg-surface" />
+            <Skeleton className="h-8 w-2/2 mt-2.5 bg-surface" />
+          </div>
+        )}
+        {topicList.map((topic) => (
           <Card key={topic.name} topic={topic} setIsExpand={setIsExpand} />
         ))}
+
+        <InfiniteScroll
+          isLoading={loading}
+          hasMore={skip < total}
+          next={getTopicList}
+        >
+          {skip < total && (
+            <div className="flex justify-center py-6 ">
+              <HashLoader
+                size={16}
+                color="var(--primary-teal)"
+                className="text-center"
+              />
+            </div>
+          )}
+        </InfiniteScroll>
       </div>
     </div>
   );

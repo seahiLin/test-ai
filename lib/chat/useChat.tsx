@@ -27,15 +27,11 @@ export default function useChat() {
     setInputValue("");
     setIsTyping(true);
 
-    const res = await fetch("/api/chat", {
+    const res = await fetch("https://api.rag.eve.platform.motiong.com/rag/v1/chat_query", {
       method: "POST",
       body: JSON.stringify({
-        messages: [
-          {
-            role: "user",
-            content: inputValue,
-          },
-        ],
+        query: inputValue,
+        project_id: "project_id1",
       }),
       headers: {
         "Content-Type": "application/json",
@@ -48,13 +44,14 @@ export default function useChat() {
       return;
     }
 
+    const newMessage: any = {
+      id: Math.random(),
+      role: "bot",
+      content: "",
+    }
     setMessages((prev) => [
       ...prev,
-      {
-        id: Math.random(),
-        role: "bot",
-        content: "",
-      },
+      newMessage,
     ]);
     while (true) {
       const { done, value } = await reader.read();
@@ -63,14 +60,10 @@ export default function useChat() {
         break;
       }
       const txt = new TextDecoder().decode(value)
+      newMessage.content += txt;
       setMessages((prev) => [
-        ...prev.slice(0, -1),
-        {
-          ...prev[prev.length - 1],
-          content:
-            prev[prev.length - 1].content + txt,
-        },
-      ]);
+        ...prev
+      ])
     }
 
     setIsTyping(false);

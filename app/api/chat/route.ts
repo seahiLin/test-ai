@@ -19,7 +19,11 @@ export async function POST(req: Request) {
     start(controller) {
       timerId = setInterval(() => {
         const msg = new TextEncoder().encode(
-          `data: k\nk \n\n`
+          `data: ${JSON.stringify({
+            message: {
+              content: "hello, i am here to help you.",
+            },
+          })}\n\n`
         );
         controller.enqueue(msg);
       }, 500);
