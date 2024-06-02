@@ -1,8 +1,16 @@
-import React from "react";
+import React, { useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
-import { ArrowDown, ChevronDown, File, LogOut, Plus, Settings, Star } from "lucide-react";
+import {
+  ArrowDown,
+  ChevronDown,
+  File,
+  LogOut,
+  Plus,
+  Settings,
+  Star,
+} from "lucide-react";
 import Link from "next/link";
 import {
   DropdownMenu,
@@ -12,9 +20,35 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { useAuth0 } from "@auth0/auth0-react";
 import BrandIcon from "@/components/brand-icon";
+import { useMount, useStateList } from "react-use";
+import { Project, projectService, userService } from "@/lib/api";
+import { useUserStore } from "@/lib/store/user";
 
 export default function Sidebar({ isCollapsed }: { isCollapsed: boolean }) {
-  const { logout, user } = useAuth0();
+  const { logout, getAccessTokenSilently } = useAuth0();
+  const { user, setUser } = useUserStore();
+  const [projectList, setProjectList] = useState<Array<Project>>([])
+
+  useMount(async () => {
+    if (!user) {
+      const userInfo = await userService.getUser({}, {
+        headers: {
+          Authorization: `Bearer ${await getAccessTokenSilently()}`,
+        },
+      });
+      setUser(userInfo);
+    }
+
+    const projectRes = await projectService.listProjects({
+      skip: 0,
+      pageSize: 10,
+    }, {
+      headers: {
+        Authorization: `Bearer ${await getAccessTokenSilently()}`,
+      },
+    });
+    setProjectList(projectRes.projects);
+  });
 
   return (
     <div className="h-full flex flex-col">
@@ -31,20 +65,30 @@ export default function Sidebar({ isCollapsed }: { isCollapsed: boolean }) {
               >
                 <NavItem className="">
                   <NavItemIcon>
-                    <Image
-                      src={user?.picture!}
-                      alt="avatar"
-                      width={24}
-                      height={24}
-                      className="rounded-full"
-                    />
+                    {user?.avatarStorageUri ? (
+                      <Image
+                        src={user?.avatarStorageUri!}
+                        alt="avatar"
+                        width={24}
+                        height={24}
+                        className="rounded-full"
+                      />
+                    ) : (
+                      <div className="w-6 h-6 rounded-full bg-surface " />
+                    )}
                   </NavItemIcon>
-                  {!isCollapsed && <NavItemText>{user?.name!}</NavItemText>}
+                  {!isCollapsed && (
+                    <NavItemText>{user?.displayName!}</NavItemText>
+                  )}
                 </NavItem>
-                <ChevronDown size={16} color="var(--text-subtitle)" className="mr-2" />
+                <ChevronDown
+                  size={16}
+                  color="var(--text-subtitle)"
+                  className="mr-2"
+                />
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="start" >
+            <DropdownMenuContent align="start">
               <DropdownMenuItem
                 className="cursor-pointer"
                 onClick={() => {
@@ -83,21 +127,16 @@ export default function Sidebar({ isCollapsed }: { isCollapsed: boolean }) {
               <Star size={20} strokeWidth={1.2} />
             </NavItemIcon>
             {!isCollapsed && <NavItemText>我收藏的项目</NavItemText>}
-            {!isCollapsed && (
+            {!isCollapsed && projectList.map((project) => (
               <NavSubItemWrapper>
-                <Link href="/project/qsei-23">
+                <Link href={`/project/${encodeURIComponent(project.name)}?project_name=${project.displayName}`}>
                   <NavSubItem>
                     <ColorBlock color="var(--primary-light-yellow)" />
-                    <NavItemText>项目#1</NavItemText>
+                    <NavItemText>{project.displayName}</NavItemText>
                   </NavSubItem>
                 </Link>
-
-                <NavSubItem>
-                  <ColorBlock color="#70A9FF" />
-                  <NavItemText>项目#2</NavItemText>
-                </NavSubItem>
               </NavSubItemWrapper>
-            )}
+            ))}
           </NavItem>
         </div>
         <div className="!mt-auto py-5 text-text-title"></div>

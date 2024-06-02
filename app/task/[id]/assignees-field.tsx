@@ -22,10 +22,10 @@ export default function AssigneesField({
       {value?.map((item, index) => (
         <div key={index} className="flex items-center gap-3">
           <div className="h-10 w-72 px-5 py-2 rounded-md bg-surface-container">
-            {item.role}
+            {item.role || "接单人"}
           </div>
           <span>-</span>
-          <UserCombobox value={item} onChange={(item) => {
+          <UserCombobox needRole value={item} onChange={(item) => {
             const newList = [...value];
             newList[index] = item;
             onChange(newList);

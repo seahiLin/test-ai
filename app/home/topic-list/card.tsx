@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { Topic } from "@/lib/api";
+import { Topic, EnhancedTopic } from "@/lib/api";
 import { format, isThisYear } from "date-fns";
 import { Link2, Maximize2 } from "lucide-react";
 import Link from "next/link";
@@ -8,28 +8,24 @@ import Comment from "./comment";
 import { cn } from "@/lib/utils";
 
 export default function Card({
-  topic,
+  item,
   setIsExpand,
 }: {
-  topic: Topic;
+  item: EnhancedTopic;
   setIsExpand: (expand: boolean) => void;
 }) {
-  // @ts-ignore
   const fileAttachments = useMemo(() => {
-    // @ts-ignore
-    return topic.attachments.filter(
-      (attachment: any) => attachment.type === "FILE"
+    return item.appendixStorageUris?.filter(
+      (attachment) => attachment.category === 0
     );
-    // @ts-ignore
-  }, [topic.attachments]);
-  // @ts-ignore
-  const imageAttachments = useMemo(() => {
-    // @ts-ignore
-    return topic.attachments.filter(
-      (attachment: any) => attachment.type === "IMAGE"
-    );
-    // @ts-ignore
-  }, [topic.attachments]);
+  }, [item.appendixStorageUris]);
+  // const imageAttachments = useMemo(() => {
+  //   // @ts-ignore
+  //   return item.attachments.filter(
+  //     (attachment: any) => attachment.type === 1
+  //   );
+  //   // @ts-ignore
+  // }, [item.appendixStorageUris]);
 
   const [expand, setExpand] = useState(false);
 
@@ -42,10 +38,10 @@ export default function Card({
     >
       <div className="flex items-center justify-between">
         <div className="flex items-center text-text-caption gap-1">
-          <span>{topic.group?.sourceType}</span>/
-          <span>{topic.group?.displayName}</span>
+          <span>{item.topic!.group?.sourceType}</span>/
+          <span>{item.topic!.group?.displayName}</span>
           <span className="text-sm ml-1">
-            · {formatDate(topic.createTime!.toDate())}
+            · {formatDate(item.topic!.createTime!.toDate())}
           </span>
         </div>
         <Button
@@ -59,23 +55,23 @@ export default function Card({
           <Maximize2 size={16} />
         </Button>
       </div>
-      {topic.labels.length ? (
+      {item.topic!.labels.length ? (
         <div className="mt-1 text-primary-teal">
-          {topic.labels.map((label) => (
+          {item.topic!.labels.map((label) => (
             <span key={label.name} className="mr-2">
               #{label.displayName}
             </span>
           ))}
         </div>
       ) : null}
-      <div className="mt-2 text-text-body text-lg font-bold">{topic.title}</div>
+      <div className="mt-2 text-text-body text-lg font-bold">{item.topic!.title}</div>
       <div
         className={cn(
           "mt-2 text-text-caption flex-grow line-clamp-6 overflow-hidden",
           expand ? "overflow-y-auto" : ""
         )}
       >
-        {topic.description}
+        {item.topic!.description}
       </div>
       {fileAttachments.length ? (
         <div className="mt-2 flex flex-col items-start gap-2">
@@ -92,9 +88,9 @@ export default function Card({
           ))}
         </div>
       ) : null}
-      <div className="mt-4">
+      {/* <div className="mt-4">
         <Comment hidden achieved />
-      </div>
+      </div> */}
     </div>
   );
 }

@@ -13,11 +13,13 @@ import { useCallback, useContext, useState } from "react";
 import { TaskUpdateOnDisplayContext } from ".";
 import Image from "next/image";
 import { formatDistanceToNowIn3Days } from "@/lib/utils";
-import { TaskActivityLog } from "@/lib/api";
+import { TaskActivityLog, taskActivityLogService } from "@/lib/api";
 import { Timestamp } from "@bufbuild/protobuf";
 import { useMount } from "react-use";
 import InfiniteScroll from "@/components/ui/infinite-scroll";
 import HashLoader from "react-spinners/HashLoader";
+import { useUserStore } from "@/lib/store/user";
+import { FieldTitleMap } from "./help";
 
 const FieldIconMap: Record<string, typeof X> = {
   STATUS: ClipboardCheck,
@@ -27,14 +29,7 @@ const FieldIconMap: Record<string, typeof X> = {
   ASSIGNER: User,
   ASSIGNEES: User,
 };
-const FieldTitleMap: Record<string, string> = {
-  STATUS: "任务状态",
-  TITLE: "任务标题",
-  DESCRIPTION: "任务描述",
-  DEADLINE: "截止日期",
-  ASSIGNER: "指派人",
-  ASSIGNEES: "执行人",
-};
+
 
 const items: Array<TaskActivityLog> = [
   {
@@ -95,20 +90,16 @@ export default function UpdateListPanel({
   const [skip, setSkip] = useState(0);
   const [total, setTotal] = useState(0);
   const [loading, setLoading] = useState(false);
+  const { user } = useUserStore();
 
   const getTaskList = useCallback(async () => {
     setLoading(true);
-    // const res = await taskService.listTasks({
-    //   pageSize: 10,
-    //   skip,
-    // });
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-    const res = {
-      enhancedTasks: items,
-      totalSize: 32,
-    };
+    const res = await taskActivityLogService.listTaskActivityLogs({
+      pageSize: 10,
+      skip,
+    });
 
-    setLogList([...logList, ...res.enhancedTasks]);
+    setLogList([...logList, ...res.taskActivityLogs]);
     setSkip(skip + 10);
     setTotal(Number(res.totalSize));
     setLoading(false);
@@ -123,30 +114,39 @@ export default function UpdateListPanel({
       <div className="flex items-center py-3 px-4 text-text-title border-b-[0.5px]">
         <Clock5 size={20} />
         <span className="ml-2">任务更新</span>
-        {closeable && <X
-          size={20}
-          className="ml-auto cursor-pointer p-1 box-content"
-          onClick={() => {
-            setTaskId(null);
-          }}
-        />}
+        {closeable && (
+          <X
+            size={20}
+            className="ml-auto cursor-pointer box-content"
+            onClick={() => {
+              setTaskId(null);
+            }}
+          />
+        )}
       </div>
       <div className="h-1 grow overflow-y-auto">
         {logList.map((item) => (
           <div key={item.name} className="py-3 px-4 border-b-[0.5px]">
             <div className="flex items-start">
-              <Image
-                // @ts-ignore
-                src={item.operator.picUrl}
-                alt="pic"
-                width={24}
-                height={24}
-                className="rounded-full"
-              />
+              {item.operator?.avatarStorageUri ? (
+                <Image
+                  // @ts-ignore
+                  src={item.operator?.avatarStorageUri}
+                  alt="pic"
+                  width={24}
+                  height={24}
+                  className="rounded-full"
+                />
+              ) : (
+                <div className="w-6 h-6 rounded-full bg-surface-background" />
+              )}
               <div className="ml-2">
                 <div className="text-text-title mb-1">
                   {/* @ts-ignore */}
-                  {item.operator.displayName} 编辑了
+                  {item.operator?.name === user?.name
+                    ? "你"
+                    : item.operator?.displayName}{" "}
+                  编辑了
                 </div>
                 <div className="text-sm text-text-caption">
                   {formatDistanceToNowIn3Days(item.createTime!.toDate())}
@@ -191,7 +191,7 @@ function FieldChangeItem({
   oldValue: string;
   newValue: string;
 }) {
-  const Icon = FieldIconMap[field];
+  const Icon = FieldIconMap[field] || Text;
 
   return (
     <div>
@@ -209,7 +209,12 @@ function FieldChangeItem({
 }
 
 const renderFieldSingleItem = (field: string, value: string) => {
-  const json = JSON.parse(value);
+  let json = null;
+  try {
+    json = JSON.parse(value);
+  } catch (e) {
+    return value;
+  }
 
   switch (field) {
     case "STATUS":

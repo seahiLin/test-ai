@@ -12,16 +12,16 @@ export default function StatusSelect({
   field,
 }: {
   field: {
-    value: string;
-    onChange: (value: string) => void;
+    value: number;
+    onChange: (value: number) => void;
   };
 }) {
   return (
     <Select
       onValueChange={(val) => {
-        val && field.onChange(val);
+        val && field.onChange(Number(val));
       }}
-      value={field.value}
+      value={field.value?.toString()}
     >
       <FormControl className="w-56">
         <SelectTrigger>
@@ -29,13 +29,13 @@ export default function StatusSelect({
         </SelectTrigger>
       </FormControl>
       <SelectContent className="">
-        <SelectItem value="UNSTARTED">
+        <SelectItem value="0">
           <StatusTag>未开始</StatusTag>
         </SelectItem>
-        <SelectItem value="INPROGRESS">
+        <SelectItem value="1">
           <StatusTag className=" bg-[#0069FF]">进行中</StatusTag>
         </SelectItem>
-        <SelectItem value="BLOCK">
+        <SelectItem value="2">
           <StatusTag className="bg-primary-brand">阻塞</StatusTag>
         </SelectItem>
       </SelectContent>

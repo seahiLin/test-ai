@@ -1,20 +1,34 @@
-import { createPromiseClient,Interceptor } from "@connectrpc/connect";
+import { createPromiseClient, Interceptor } from "@connectrpc/connect";
 import { createGrpcWebTransport } from "@connectrpc/connect-web";
 
 import { TaskService } from "@buf/motiong-io_motiongapis.connectrpc_es/motiong/dataplatform/v1/services/task_connect";
+import { UserService } from "@buf/motiong-io_motiongapis.connectrpc_es/motiong/dataplatform/v1/services/user_connect";
+import { ProjectService } from "@buf/motiong-io_motiongapis.connectrpc_es/motiong/dataplatform/v1/services/project_connect";
+import { MessageService } from "@buf/motiong-io_motiongapis.connectrpc_es/motiong/dataplatform/v1/services/message_connect";
+import { FileService } from "@buf/motiong-io_motiongapis.connectrpc_es/motiong/dataplatform/v1/services/file_connect";
 import { TaskActivityLogService } from "@buf/motiong-io_motiongapis.connectrpc_es/motiong/dataplatform/v1/services/task_activity_log_connect";
 import { TopicService } from "@buf/motiong-io_motiongapis.connectrpc_es/motiong/dataplatform/v1/services/topic_connect";
 import envConfig from "./env";
 
-export { Topic } from "@buf/motiong-io_motiongapis.bufbuild_es/motiong/dataplatform/v1/resources/topic_pb";
+export {
+  Topic,
+  EnhancedTopic,
+} from "@buf/motiong-io_motiongapis.bufbuild_es/motiong/dataplatform/v1/resources/topic_pb";
 export { TaskActivityLog } from "@buf/motiong-io_motiongapis.bufbuild_es/motiong/dataplatform/v1/resources/task_activity_log_pb";
 export { EnhancedTask as Task } from "@buf/motiong-io_motiongapis.bufbuild_es/motiong/dataplatform/v1/resources/task_pb";
 export { User } from "@buf/motiong-io_motiongapis.bufbuild_es/motiong/dataplatform/v1/resources/user_pb";
+export { Project } from "@buf/motiong-io_motiongapis.bufbuild_es/motiong/dataplatform/v1/resources/project_pb";
+export { Message } from "@buf/motiong-io_motiongapis.bufbuild_es/motiong/dataplatform/v1/resources/message_pb";
 
+export const Auth0Info = {
+  token: "",
+};
 const interceptors: Interceptor[] = [
   // (next) => async (request) => {
-  //     request.header.set("Motiong-Site", "CN");
-  //     request.header.set("Motiong-Language", "zh-CN");
+  //   if (Auth0Info.token) {
+  //     request.header.set("Authorization", `Bearer ${Auth0Info.token}`);
+  //   }
+
   //   return next(request);
   // },
 ];
@@ -46,3 +60,12 @@ const transport = createGrpcWebTransport({
 });
 
 export const taskService = createPromiseClient(TaskService, transport);
+export const userService = createPromiseClient(UserService, transport);
+export const projectService = createPromiseClient(ProjectService, transport);
+export const fileService = createPromiseClient(FileService, transport);
+export const topicService = createPromiseClient(TopicService, transport);
+export const messageService = createPromiseClient(MessageService, transport);
+export const taskActivityLogService = createPromiseClient(
+  TaskActivityLogService,
+  transport
+);

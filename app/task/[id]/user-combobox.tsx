@@ -19,11 +19,15 @@ import {
   PopoverTrigger,
 } from "@/components/ui/popover";
 import { AssigneUser } from "./assigner-field";
+import { userService } from "@/lib/api";
+import { debounce } from 'lodash'
 
 export default function UserCombobox({
+  needRole = false,
   value,
   onChange,
 }: {
+  needRole?: boolean;
   value?: AssigneUser;
   onChange: (value: AssigneUser) => void;
 }) {
@@ -32,26 +36,27 @@ export default function UserCombobox({
     Array<{
       label: string;
       value: string;
+      role?: string
     }>
   >([]);
 
   const onInputChange = React.useCallback(
-    (value: string) => {
-      setUserList([
-        {
-          label: "张三",
-          value: "1",
-        },
-        {
-          label: "李四",
-          value: "2",
-        },
-        {
-          label: "王五",
-          value: "3",
-        },
-      ] as any);
-    },
+    debounce(async(value: string) => {
+      if (!value) {
+        setUserList([]);
+        return;
+      }
+      const res = await userService.listUsers({
+        skip: 0,
+        pageSize: 20,
+        filter: `displayName=${value}`,
+      })
+      setUserList(res.users.map((user) => ({
+        label: user.displayName,
+        value: user.name,
+        role: needRole ? user.position : undefined
+      })));
+    }, 300),
     [setUserList]
   );
 
@@ -82,14 +87,15 @@ export default function UserCombobox({
                   key={user.value}
                   value={user.value}
                   onSelect={(currentValue) => {
+                    console.log(user, 'user change')
                     onChange(currentValue === value?.name ? {
                       name: "",
                       displayName: "",
-                      role: value?.role || "MANAGER",
+                      role: value?.role || user.role || "MANAGER",
                     } : {
                       name: currentValue,
                       displayName: user.label,
-                      role: value?.role || "MANAGER",
+                      role: value?.role || user.role || "MANAGER",
                     });
                     setOpen(false);
                   }}

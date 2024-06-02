@@ -5,7 +5,8 @@ import { Input } from "./input";
 import { useRef } from "react";
 import type { UploadProps } from "antd";
 import { Upload } from "antd";
-import { cn } from "@/lib/utils";
+import { aliyunOssUploadRequest, cn, initActionUrl } from "@/lib/utils";
+import axios from "axios";
 
 const { Dragger } = Upload;
 
@@ -21,7 +22,8 @@ interface File {
 const props: UploadProps = {
   name: "file",
   multiple: true,
-  action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
+  action: initActionUrl,
+  customRequest: aliyunOssUploadRequest,
 };
 
 export default function FileUpload({
@@ -55,10 +57,12 @@ export default function FileUpload({
                 <LoaderCircle size={12} className="animate-spin" />
               ) : null}
               <div
-                className={cn(file.status === "done" ? "cursor-pointer hover:underline" : "")}
+                className={cn(
+                  file.status === "done" ? "cursor-pointer hover:underline" : ""
+                )}
                 onClick={() => {
                   if (file.status === "done") {
-                    window.open(file.url, "_blank");
+                    window.open(file.url || file.response.url, "_blank");
                   }
                 }}
               >

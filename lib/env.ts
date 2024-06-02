@@ -1,7 +1,7 @@
 const env = process.env.ENVIRONMENT;
 
 const DevEnv = {
-  apiHost: "https://api.staging.motiong.net",
+  apiHost: "https://api.platform.dev.motiong.net",
   websiteHost: "http://cloud.motiong.dev-com"
 }
 const TestEnv = {
