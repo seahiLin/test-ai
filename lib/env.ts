@@ -5,7 +5,7 @@ const DevEnv = {
   websiteHost: "http://cloud.motiong.dev-com"
 }
 const TestEnv = {
-  apiHost: "http://api.motiong.test-com",
+  apiHost: "https://api.platform.dev.motiong.net",
   websiteHost: "http://cloud.motiong.test-com"
 }
 const StagingEnv = {
@@ -26,7 +26,7 @@ const ProdEnv = {
 }
 
 let envConfig: typeof PreEnv
-if (env === 'TEST') {
+if (env === 'DEV') {
   envConfig = TestEnv
 } else if (env === 'STAGING') {
   envConfig = StagingEnv

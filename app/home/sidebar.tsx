@@ -128,7 +128,7 @@ export default function Sidebar({ isCollapsed }: { isCollapsed: boolean }) {
             </NavItemIcon>
             {!isCollapsed && <NavItemText>我收藏的项目</NavItemText>}
             {!isCollapsed && projectList.map((project) => (
-              <NavSubItemWrapper>
+              <NavSubItemWrapper key={project.name}>
                 <Link href={`/project/${encodeURIComponent(project.name)}?project_name=${project.displayName}`}>
                   <NavSubItem>
                     <ColorBlock color="var(--primary-light-yellow)" />

@@ -226,6 +226,7 @@ function ChatCard({ message, typing }: { message: Message; typing?: boolean }) {
       {message.content.attachments?.map((attachment, index) =>
         attachment.file_type.startsWith("image") ? (
           <Image
+            key={index}
             src={attachment.file_link}
             alt=""
             width={160}
@@ -303,6 +304,7 @@ function ChatCard({ message, typing }: { message: Message; typing?: boolean }) {
                   {...rest}
                   ref={rest.ref as any}
                   PreTag="div"
+                  // eslint-disable-next-line react/no-children-prop
                   children={String(children).replace(/\n$/, "")}
                   language={match[1]}
                   style={atomDark}

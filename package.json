@@ -6,7 +6,8 @@
     "dev": "next dev -p 3001",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "dev:docker": "docker build --build-arg ENVIRONMENT=DEV -t nextjs-docker . && docker run -p 3000:3000 nextjs-docker"
   },
   "dependencies": {
     "@auth0/auth0-react": "^2.2.4",
